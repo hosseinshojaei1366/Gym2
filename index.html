@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="fa" dir="rtl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ردیاب بدنسازی</title>
+<style>
+:root{--bg:#f6f7f9;--cd:#fff;--tx:#17202a;--mu:#6b7785;--ac:#e8590c;--bd:#e3e6ea;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#111418;--cd:#1c2127;--tx:#eef1f4;--mu:#9aa5b1;--bd:#2d343c}}
+:root[data-theme="dark"]{--bg:#111418;--cd:#1c2127;--tx:#eef1f4;--mu:#9aa5b1;--bd:#2d343c}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--tx);font-family:Vazirmatn,Tahoma,system-ui,sans-serif;display:flex;flex-direction:column;font-size:15px}
+main{flex:1;overflow:auto;padding:12px}
+nav{display:flex;background:var(--cd);border-top:1px solid var(--bd);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav button{flex:1;border:0;background:none;color:var(--mu);padding:8px 0;font:inherit;font-size:11px}
+nav button b{display:block;font-size:20px;font-weight:400}
+nav button.on{color:var(--ac)}
+.c{background:var(--cd);border:1px solid var(--bd);border-radius:14px;padding:12px;margin-bottom:12px}
+h3{margin:0 0 8px;font-size:15px}
+label{display:block;font-size:12px;color:var(--mu);margin:6px 0 3px}
+input,select{width:100%;box-sizing:border-box;padding:10px;border:1px solid var(--bd);border-radius:10px;background:var(--bg);color:var(--tx);font:inherit}
+.r{display:flex;gap:8px}.r>*{flex:1}
+.btn{background:var(--ac);color:#fff;border:0;border-radius:10px;padding:11px;font:inherit;width:100%;margin-top:8px}
+.g{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.x{border:1px solid var(--bd);background:var(--bg);color:var(--tx);border-radius:12px;padding:8px 2px;font:inherit;font-size:11px}
+.x b{display:block;font-size:26px;font-weight:400}
+.x.on{border-color:var(--ac);background:color-mix(in srgb,var(--ac) 14%,var(--bg))}
+.ch{display:flex;gap:6px;overflow-x:auto;margin-bottom:8px}
+.ch button{border:1px solid var(--bd);background:var(--bg);color:var(--tx);border-radius:20px;padding:6px 12px;font:inherit;font-size:13px;white-space:nowrap}
+.ch button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.m{color:var(--mu);font-size:13px}
+.row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--bd)}
+.row button{border:0;background:none;color:var(--mu);font-size:16px}
+svg.s{width:100%;direction:ltr}svg text{fill:var(--mu);font-size:10px}
+.ph{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.ph img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:10px}
+.k{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.k div{background:var(--bg);border-radius:10px;padding:10px;text-align:center}
+.k b{display:block;font-size:20px;color:var(--ac)}
+</style></head><body>
+<main id="v"></main>
+<nav id="nv"></nav>
+<script>
+const E0=[["squat","اسکوات","🦵","پا"],["lp","پرس پا","🦿","پا"],["lunge","لانچ","🚶","پا"],["rdl","ددلیفت رومانیایی","🏋️‍♂️","پا"],["calf","ساق پا","🦶","پا"],["bp","پرس سینه هالتر","🏋️","سینه"],["db","پرس سینه دمبل","🤜","سینه"],["fly","فلای","🦅","سینه"],["pu","شنا","🤸","سینه"],["lat","لت‌پول‌داون","⬇️","پشت"],["row","زیربغل سیم‌کش","🚣","پشت"],["chin","بارفیکس","🧗","پشت"],["ohp","پرس سرشانه","🙌","شانه"],["lat2","نشر از جانب","🕊️","شانه"],["bi","جلو بازو","💪","بازو"],["tri","پشت بازو","🔱","بازو"],["plank","پلانک","🧘","شکم"],["crunch","کرانچ","🔄","شکم"]];
+const GR=["همه","پا","سینه","پشت","شانه","بازو","شکم"];
+const $=i=>document.getElementById(i);
+const T=()=>{const d=new Date();return new Date(d-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)};
+const n=x=>(+x).toLocaleString('fa-IR',{maximumFractionDigits:1});
+let D={s:{},w:{},p:{h:169,a:'',x:'',v:1.375}},P={},tab='log',cur=T(),grp='همه',sel=null,pe=null,per=30;
+try{const r=localStorage.getItem('gymapp');if(r)D=Object.assign(D,JSON.parse(r))}catch(e){}
+const save=()=>{try{localStorage.setItem('gymapp',JSON.stringify(D))}catch(e){}};
+const idb=()=>new Promise((res,rej)=>{try{const q=indexedDB.open('gym',1);q.onupgradeneeded=()=>q.result.createObjectStore('p');q.onsuccess=()=>res(q.result);q.onerror=()=>rej()}catch(e){rej()}});
+const pget=async()=>{try{const d=await idb();return await new Promise(r=>{const a={},c=d.transaction('p').objectStore('p').openCursor();c.onsuccess=()=>{const k=c.result;if(k){a[k.key]=k.value;k.continue()}else r(a)};c.onerror=()=>r({})})}catch(e){return{}}};
+const pput=async(k,v)=>{try{const d=await idb();const o=d.transaction('p','readwrite').objectStore('p');v==null?o.delete(k):o.put(v,k)}catch(e){}};
+const lastW=e=>{for(const d of Object.keys(D.s).sort().reverse()){const s=D.s[d].sets.filter(x=>x.e==e);if(s.length)return s.at(-1).w}return''};
+
+function chart(pts){
+if(pts.length<2)return'<p class="m">برای دیدن نمودار حداقل دو ثبت لازم است.</p>';
+const W=320,H=150,p=26,vs=pts.map(x=>x.v),mn=Math.min(...vs),mx=Math.max(...vs),r=mx-mn||1;
+const X=i=>p+i*(W-2*p)/(pts.length-1),Y=v=>H-p-(v-mn)/r*(H-2*p);
+return`<svg class="s" viewBox="0 0 ${W} ${H}"><path d="${pts.map((x,i)=>(i?'L':'M')+X(i)+' '+Y(x.v)).join('')}" fill="none" stroke="var(--ac)" stroke-width="2.5"/>${pts.map((x,i)=>`<circle cx="${X(i)}" cy="${Y(x.v)}" r="3.5" fill="var(--ac)"/>`).join('')}<text x="2" y="${Y(mx)+4}">${n(mx)}</text><text x="2" y="${Y(mn)+4}">${n(mn)}</text><text x="${p}" y="${H-6}">${fd(pts[0].d)}</text><text x="${W-p}" y="${H-6}" text-anchor="end">${fd(pts.at(-1).d)}</text></svg>`}
+
+function addSet(){const w=+$('w').value||0,r=+$('rp').value;if(!(r>0))return;(D.s[cur]=D.s[cur]||{m:60,sets:[]}).sets.push({e:sel,w,r});save();render()}
+function delSet(i){D.s[cur].sets.splice(i,1);if(!D.s[cur].sets.length)delete D.s[cur];save();render()}
+
+function vPro(){
+const ex=[...new Set(Object.values(D.s).flatMap(s=>s.sets.map(x=>x.e)))];
+if(!ex.length)return'<div class="c"><p class="m">بعد از ثبت اولین تمرین، نمودار پیشرفت اینجا ظاهر می‌شود.</p></div>';
+if(!ex.includes(pe))pe=ex[0];
+const best=[],vol=[];
+Object.keys(D.s).sort().forEach(d=>{const s=D.s[d].sets.filter(x=>x.e==pe);if(s.length){best.push({d,v:Math.max(...s.map(x=>x.w))});vol.push({d,v:s.reduce((a,x)=>a+x.w*x.r,0)})}});
+return`<div class="c"><label>حرکت</label><select onchange="pe=this.value;render()">${ex.map(e=>`<option value="${e}" ${e==pe?'selected':''}>${en(e)[2]} ${en(e)[1]}</option>`).join('')}</select></div><div class="c"><h3>بیشترین وزنه هر جلسه (کیلو)</h3>${chart(best)}</div><div class="c"><h3>حجم کل تمرین (وزنه × تکرار)</h3>${chart(vol)}</div>`}
+
+function addW(){const v=+$('bw').value;if(v>0){D.w[cur]=v;save();render()}}
+
+function vCal(){
+const p=D.p,w=lw();let r='<p class="m">سن و جنسیت را وارد کن تا نیاز کالری محاسبه شود.</p>';
+if(+p.a>0&&p.x){const bmr=10*w+6.25*p.h-5*p.a+(p.x=='m'?5:-161),t=bmr*p.v;r=`<div class="k"><div><b>${n(bmr)}</b>متابولیسم پایه</div><div><b>${n(t)}</b>نیاز روزانه</div><div><b>${n(t-400)}</b>هدف روزانه برای چربی‌سوزی</div><div><b>${n(1.6*w)}</b>پروتئین روزانه (گرم)</div></div><p class="m">اعداد تخمینی‌اند؛ بعد از ۲ تا ۳ هفته با روند وزن و دور کمر تنظیمشان کن.</p>`}
+return`<div class="c"><h3>مشخصات (وزن فعلی ${n(w)} کیلو)</h3><div class="r"><div><label>قد (سانتی‌متر)</label><input type="number" inputmode="decimal" value="${p.h}" onchange="sp('h',+this.value)"></div><div><label>سن</label><input type="number" inputmode="numeric" value="${p.a}" onchange="sp('a',+this.value)"></div></div><div class="r"><div><label>جنسیت</label><select onchange="sp('x',this.value)"><option value="">انتخاب</option><option value="m" ${p.x=='m'?'selected':''}>مرد</option><option value="f" ${p.x=='f'?'selected':''}>زن</option></select></div><div><label>سطح فعالیت</label><select onchange="sp('v',+this.value)">${[[1.2,'کم‌تحرک'],[1.375,'۱ تا ۳ روز ورزش'],[1.55,'۳ تا ۵ روز ورزش'],[1.725,'خیلی فعال']].map(a=>`<option value="${a[0]}" ${p.v==a[0]?'selected':''}>${a[1]}</option>`).join('')}</select></div></div></div><div class="c"><h3>کالری مصرفی</h3>${r}</div><div class="c"><h3>کالری سوخته در تمرین</h3><p class="m">با فرمول MET برای وزنه‌زدن متوسط (۵) × وزن × مدت جلسه. جلسه ۶۰ دقیقه‌ای حدود ${n(Math.round(5*w))} کیلوکالری است. در تب تمرین مدت هر جلسه را ثبت کن.</p></div>`}
+function sp(k,v){D.p[k]=v;save();render()}
+
+D.ex=D.ex||{o:{},c:[],h:[]};
+const MN=["فروردین","اردیبهشت","خرداد","تیر","مرداد","شهریور","مهر","آبان","آذر","دی","بهمن","اسفند"];
+const JF=new Intl.DateTimeFormat('en-US-u-ca-persian-nu-latn',{timeZone:'UTC',year:'numeric',month:'numeric',day:'numeric'});
+const J=d=>{const o={};JF.formatToParts(new Date(d+'T12:00:00Z')).forEach(p=>o[p.type]=parseInt(p.value));return[o.year||o.relatedYear,o.month,o.day]};
+const G=(y,m,d)=>{let t=Date.UTC(y+621,2,21)+((m-1)*30.5+d-1)*864e5;for(let i=0;i<120;i++){const s=new Date(t).toISOString().slice(0,10),[a,b,c]=J(s);if(a==y&&b==m&&c==d)return s;t+=((y*10000+m*100+d)>(a*10000+b*100+c)?1:-1)*864e5}return null};
+const addD=(d,k)=>new Date(Date.parse(d+'T12:00:00Z')+k*864e5).toISOString().slice(0,10);
+const fy=v=>(v+'').replace(/\d/g,c=>'۰۱۲۳۴۵۶۷۸۹'[c]);
+const fd=d=>{const j=J(d);return fy(j[2])+' '+MN[j[1]-1]};
+const lw=d=>{const k=Object.keys(D.w).sort(),b=k.filter(x=>x<=(d||'9')).pop()||k[0];return b?D.w[b]:77};
+const kc=(s,d)=>Math.round((s.i||5)*lw(d)*(s.m||60)/60);
+const XL=()=>[...E0.map(e=>{const o=D.ex.o[e[0]];return o?[e[0],o.n,o.i,o.g]:e}),...D.ex.c];
+const en=e=>XL().find(x=>x[0]==e)||["","؟","❓",""];
+let ed=null,cmpA=null,cmpB=null;
+function sd(i,v){const j=J(cur);j[i]=+v;for(let x=j[2];x>27;x--){const g=G(j[0],j[1],x);if(g){cur=g;break}}render()}
+const dp=()=>{const[y,m,d]=J(cur),ty=J(T())[0],ys=[ty-2,ty-1,ty,ty+1];if(!ys.includes(y))ys.push(y);
+const op=(a,b,f)=>a.map(v=>`<option value="${v}" ${v==b?'selected':''}>${f(v)}</option>`).join('');
+return`<label>تاریخ (شمسی)</label><div class="r" style="align-items:center"><button class="x" style="flex:0 0 40px" onclick="cur=addD(cur,-1);render()">▶</button><select onchange="sd(2,this.value)">${op([...Array(31)].map((_,i)=>i+1),d,fy)}</select><select onchange="sd(1,this.value)">${op([...Array(12)].map((_,i)=>i+1),m,v=>MN[v-1])}</select><select onchange="sd(0,this.value)">${op(ys.sort(),y,fy)}</select><button class="x" style="flex:0 0 40px" onclick="cur=addD(cur,1);render()">◀</button></div>${cur!=T()?'<p class="m" style="margin:6px 0 0"><a href="#" onclick="cur=T();render();return false" style="color:var(--ac)">برو به امروز</a></p>':''}`};
+function vEd(){const e=ed=='new'?['','','💪','بازو']:en(ed);return`<div class="c"><h3>${ed=='new'?'حرکت جدید':'ویرایش حرکت'}</h3><div class="r"><div style="flex:0 0 70px"><label>آیکون</label><input id="ei" value="${e[2]}"></div><div><label>نام حرکت</label><input id="en" value="${e[1]}"></div></div><label>گروه عضلانی</label><select id="eg">${GR.slice(1).map(g=>`<option ${g==e[3]?'selected':''}>${g}</option>`).join('')}</select><button class="btn" onclick="saveEx()">ذخیره</button>${ed!='new'?'<button class="btn" style="background:var(--mu)" onclick="hideEx()">حذف از لیست</button>':''}<button class="btn" style="background:none;color:var(--mu)" onclick="ed=null;render()">انصراف</button></div>`}
+function saveEx(){const nm=$('en').value.trim();if(!nm)return;const i=$('ei').value.trim()||'💪',g=$('eg').value;if(ed=='new'){const id='u'+Date.now();D.ex.c.push([id,nm,i,g]);sel=id}else if(ed[0]=='u'){const x=D.ex.c.find(a=>a[0]==ed);x[1]=nm;x[2]=i;x[3]=g}else D.ex.o[ed]={n:nm,i,g};ed=null;save();render()}
+function hideEx(){D.ex.h.push(ed);if(sel==ed)sel=null;ed=null;save();render()}
+function setS(k,v){const s=D.s[cur]=D.s[cur]||{m:60,i:5,sets:[]};s[k]=+v||(k=='m'?60:5);save();render()}
+function vLog(){if(ed)return vEd();
+const s=D.s[cur]||{m:60,i:5,sets:[]};
+let h=`<div class="c">${dp()}<div class="r"><div><label>مدت جلسه (دقیقه)</label><input type="number" inputmode="decimal" value="${s.m}" onchange="setS('m',this.value)"></div><div><label>شدت تمرین</label><select onchange="setS('i',this.value)">${[[3.5,'سبک'],[5,'متوسط'],[6,'سنگین']].map(a=>`<option value="${a[0]}" ${(s.i||5)==a[0]?'selected':''}>${a[1]}</option>`).join('')}</select></div></div></div>`;
+h+=`<div class="c"><h3>انتخاب حرکت</h3><div class="ch">${GR.map(g=>`<button class="${g==grp?'on':''}" onclick="grp='${g}';render()">${g}</button>`).join('')}</div><div class="g">${XL().filter(e=>!D.ex.h.includes(e[0])&&(grp=='همه'||e[3]==grp)).map(e=>`<button class="x ${sel==e[0]?'on':''}" onclick="sel='${e[0]}';render()"><b>${e[2]}</b>${e[1]}</button>`).join('')}</div><div class="r" style="margin-top:8px"><button class="x" onclick="ed='new';render()">➕ حرکت جدید</button>${sel?`<button class="x" onclick="ed='${sel}';render()">✏️ ویرایش «${en(sel)[1]}»</button>`:''}</div>${D.ex.h.length?'<p class="m"><a href="#" onclick="D.ex.h=[];save();render();return false" style="color:var(--ac)">بازگرداندن حرکات حذف‌شده</a></p>':''}`;
+if(sel)h+=`<div class="r"><div><label>وزنه (کیلو)</label><input id="w" type="number" inputmode="decimal" value="${lastW(sel)}"></div><div><label>تکرار</label><input id="rp" type="number" inputmode="numeric"></div></div><button class="btn" onclick="addSet()">ثبت ست ${en(sel)[1]}</button>`;
+h+='</div>';
+h+=`<div class="c"><h3>ست‌های این روز</h3>${s.sets.length?s.sets.map((x,i)=>`<div class="row"><span>${en(x.e)[2]} ${en(x.e)[1]} — ${n(x.w)} کیلو × ${n(x.r)}</span><button onclick="delSet(${i})">✕</button></div>`).join(''):'<p class="m">هنوز ستی ثبت نشده.</p>'}</div>`;
+h+=`<div class="c"><div class="k"><div><b>${n(kc(s,cur))}</b>کیلوکالری سوخته این جلسه (تخمینی)</div><div><b>${n(s.sets.reduce((a,x)=>a+x.w*x.r,0))}</b>حجم کل جلسه (کیلو)</div></div><p class="m">محاسبه: شدت × وزن بدن × مدت جلسه.</p></div>`;
+return h}
+function vBody(){
+const ws=Object.keys(D.w).sort().map(d=>({d,v:D.w[d]})),K=Object.keys(P),wk=K.filter(k=>k[0]=='w').map(k=>k.slice(2)).sort(),dl=K.filter(k=>k[0]!='w').sort().reverse();
+const due=!wk.length||(Date.parse(T())-Date.parse(wk.at(-1)))/864e5>=7;
+const a=wk.includes(cmpA)?cmpA:wk[0],b=wk.includes(cmpB)?cmpB:wk.at(-1);
+const wn=d=>'هفته '+n(Math.round((Date.parse(d)-Date.parse(wk[0]))/6048e5)+1);
+const sl=(v,f)=>`<select onchange="${f}=this.value;render()">${wk.map(d=>`<option value="${d}" ${d==v?'selected':''}>${fd(d)}</option>`).join('')}</select>`;
+const pb=(k,w)=>`${P[k]?`<img src="${P[k]}" style="width:50%;border-radius:10px"><button class="btn" style="background:var(--mu)" onclick="delP(${w})">حذف عکس</button>`:''}<label class="btn" style="display:block;text-align:center;box-sizing:border-box">📷 ${P[k]?'تعویض':'افزودن'} عکس<input type="file" accept="image/*" style="display:none" onchange="addP(this,${w})"></label>`;
+const im=d=>`<div><img src="${P['w:'+d]}" style="width:100%;border-radius:10px"><div class="m">${wn(d)}${D.w[d]?' — '+n(D.w[d])+' کیلو':''}</div></div>`;
+return`<div class="c">${dp()}<label>وزن بدن (کیلو)</label><input id="bw" type="number" inputmode="decimal" value="${D.w[cur]||''}"><button class="btn" onclick="addW()">ثبت وزن</button></div><div class="c"><h3>نمودار وزن بدن</h3>${chart(ws)}</div>
+<div class="c"><h3>عکس هفتگی اندام</h3>${due?'<p class="m" style="color:var(--ac)">وقت عکس هفتگی است. هر هفته با همان نور، فاصله و حالت بگیر.</p>':''}${pb('w:'+cur,1)}</div>
+${wk.length>1?`<div class="c"><h3>مقایسه اندام</h3><div class="r">${sl(a,'cmpA')}${sl(b,'cmpB')}</div><div class="r" style="margin-top:8px">${im(a)}${im(b)}</div>${D.w[a]&&D.w[b]?`<p class="m">تغییر وزن: ${n(D.w[b]-D.w[a])} کیلو</p>`:''}</div>`:''}
+<div class="c"><h3>عکس روزانه</h3>${pb(cur,0)}</div>
+${dl.length?`<div class="c"><h3>گالری روزانه</h3><div class="ph">${dl.map(d=>`<div onclick="cur='${d}';render()"><img src="${P[d]}"><div class="m" style="text-align:center">${fd(d)}</div></div>`).join('')}</div></div>`:''}`}
+function addP(i,w){const f=i.files[0];if(!f)return;const k=(w?'w:':'')+cur,im=new Image();im.onload=()=>{const s=Math.min(1,640/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=im.width*s;c.height=im.height*s;c.getContext('2d').drawImage(im,0,0,c.width,c.height);const u=c.toDataURL('image/jpeg',.7);P[k]=u;pput(k,u);render()};im.src=URL.createObjectURL(f)}
+function delP(w){const k=(w?'w:':'')+cur;delete P[k];pput(k,null);render()}
+function vRep(){
+const c=new Date();c.setDate(c.getDate()-per);const cut=new Date(c-c.getTimezoneOffset()*6e4).toISOString().slice(0,10);
+const ds=Object.keys(D.s).filter(d=>d>=cut).sort(),sets=ds.flatMap(d=>D.s[d].sets);
+const vol=sets.reduce((a,x)=>a+x.w*x.r,0),kcal=ds.reduce((a,d)=>a+kc(D.s[d],d),0);
+const ws=Object.keys(D.w).filter(d=>d>=cut).sort(),dw=ws.length>1?D.w[ws.at(-1)]-D.w[ws[0]]:null;
+const bm={};sets.forEach(x=>bm[x.e]=Math.max(bm[x.e]||0,x.w));
+const pk=Object.keys(P).filter(k=>k[0]=='w'&&k.slice(2)>=cut).map(k=>k.slice(2)).sort();
+return`<div class="ch">${[7,30,90].map(p=>`<button class="${p==per?'on':''}" onclick="per=${p};render()">${n(p)} روز اخیر</button>`).join('')}</div>
+<div class="c"><div class="k"><div><b>${n(ds.length)}</b>جلسه تمرین</div><div><b>${n(sets.length)}</b>ست</div><div><b>${n(vol)}</b>حجم کل (کیلو)</div><div><b>${n(kcal)}</b>کیلوکالری سوخته</div><div><b>${dw==null?'—':(dw>0?'+':'')+n(dw)}</b>تغییر وزن (کیلو)</div><div><b>${n(pk.length)}</b>عکس هفتگی</div></div></div>
+<div class="c"><h3>جلسات</h3>${ds.length?ds.slice().reverse().map(d=>`<div class="row"><span>${fd(d)} — ${n(D.s[d].sets.length)} ست، ${n(D.s[d].m)} دقیقه</span><b>${n(kc(D.s[d],d))} کیلوکالری</b></div>`).join(''):'<p class="m">جلسه‌ای در این بازه نیست.</p>'}</div>
+<div class="c"><h3>بیشترین وزنه هر حرکت</h3>${Object.keys(bm).length?Object.keys(bm).map(e=>`<div class="row"><span>${en(e)[2]} ${en(e)[1]}</span><b>${n(bm[e])} کیلو</b></div>`).join(''):'<p class="m">داده‌ای در این بازه نیست.</p>'}</div>
+${pk.length>1?`<div class="c"><h3>مقایسه اندام: اولین و آخرین عکس هفتگی</h3><div class="r"><div><img src="${P['w:'+pk[0]]}" style="width:100%;border-radius:10px"><div class="m">${fd(pk[0])}</div></div><div><img src="${P['w:'+pk.at(-1)]}" style="width:100%;border-radius:10px"><div class="m">${fd(pk.at(-1))}</div></div></div></div>`:''}`}
+let pend=null,msg='';
+const dlf=(name,txt)=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'application/json'}));a.download=name;a.click()};
+async function backup(){D.lb=T();save();const name='gym-backup-'+T()+'.json',txt=JSON.stringify({v:1,D,P}),C=window.Capacitor;try{if(C&&C.isNativePlatform&&C.isNativePlatform()){const F=C.Plugins.Filesystem;await F.writeFile({path:name,data:txt,directory:'CACHE',encoding:'utf8'});const u=await F.getUri({path:name,directory:'CACHE'});await C.Plugins.Share.share({title:name,url:u.uri})}else dlf(name,txt);msg=''}catch(e){msg='ساخت یا اشتراک فایل پشتیبان انجام نشد'}render()}
+function pickR(i){const f=i.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const o=JSON.parse(r.result);if(!o.D||!o.D.s)throw 0;o.P=o.P||{};pend=o;msg=''}catch(e){pend=null;msg='فایل پشتیبان معتبر نیست'}render()};r.readAsText(f)}
+async function doRestore(){const o=pend;for(const k of Object.keys(P))if(!(k in o.P))await pput(k,null);for(const k in o.P)await pput(k,o.P[k]);D=Object.assign({s:{},w:{},p:D.p,ex:{o:{},c:[],h:[]}},o.D);P=o.P;save();pend=null;msg='اطلاعات بازیابی شد';render()}
+function vSet(){return`<div class="c"><h3>پشتیبان‌گیری</h3><p class="m">همه تمرین‌ها، وزن‌ها، حرکات و عکس‌ها در یک فایل ذخیره می‌شود. بعد از ساخت فایل، آن را در Google Drive یا تلگرام ذخیره کن. ${D.lb?'آخرین پشتیبان: '+fd(D.lb)+'.':'هنوز پشتیبان نگرفته‌ای.'}</p><button class="btn" onclick="backup()">💾 ساخت فایل پشتیبان</button></div>
+<div class="c"><h3>بازیابی</h3><label class="btn" style="display:block;text-align:center;box-sizing:border-box">📂 انتخاب فایل پشتیبان<input type="file" style="display:none" onchange="pickR(this)"></label>${pend?`<p class="m">${n(Object.keys(pend.D.s).length)} جلسه و ${n(Object.keys(pend.P).length)} عکس پیدا شد. اطلاعات فعلی با آن جایگزین می‌شود.</p><button class="btn" onclick="doRestore()">جایگزین کن</button>`:''}${msg?`<p class="m" style="color:var(--ac)">${msg}</p>`:''}</div>`}
+const TABS=[['log','🏋️','تمرین',vLog],['pro','📈','پیشرفت',vPro],['body','⚖️','بدن',vBody],['rep','📋','گزارش',vRep],['cal','🔥','کالری',vCal],['set','💾','پشتیبان',vSet]];
+function render(){const t=TABS.find(x=>x[0]==tab);$('v').innerHTML=t[3]();$('nv').innerHTML=TABS.map(x=>`<button class="${x[0]==tab?'on':''}" onclick="tab='${x[0]}';render();$('v').scrollTop=0"><b>${x[1]}</b>${x[2]}</button>`).join('')}
+render();pget().then(a=>{P=a;render()});
+</script></body></html>
