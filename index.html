@@ -10,8 +10,8 @@ html,body{margin:0;height:100%}
 body{background:var(--bg);color:var(--tx);font-family:Vazirmatn,Tahoma,system-ui,sans-serif;display:flex;flex-direction:column;font-size:15px}
 main{flex:1;overflow:auto;padding:12px}
 nav{display:flex;background:var(--cd);border-top:1px solid var(--bd);padding-bottom:env(safe-area-inset-bottom,0px)}
-nav button{flex:1;border:0;background:none;color:var(--mu);padding:8px 0;font:inherit;font-size:11px}
-nav button b{display:block;font-size:20px;font-weight:400}
+nav button{flex:1;border:0;background:none;color:var(--mu);padding:8px 0;font:inherit;font-size:10px}
+nav button b{display:block;font-size:18px;font-weight:400}
 nav button.on{color:var(--ac)}
 .c{background:var(--cd);border:1px solid var(--bd);border-radius:14px;padding:12px;margin-bottom:12px}
 h3{margin:0 0 8px;font-size:15px}
@@ -33,6 +33,7 @@ svg.s{width:100%;direction:ltr}svg text{fill:var(--mu);font-size:10px}
 .ph{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
 .ph img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:10px}
 .cg{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}.cl{padding:8px 0;font-size:14px}.cl small{display:block;font-size:10px;color:var(--mu);min-height:12px}
+.px{border-top:1px solid var(--bd);padding:8px 0}
 .k{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .k div{background:var(--bg);border-radius:10px;padding:10px;text-align:center}
 .k b{display:block;font-size:20px;color:var(--ac)}
@@ -102,7 +103,7 @@ function setS(k,v){const s=D.s[cur]=D.s[cur]||{m:60,i:5,sets:[]};s[k]=+v||(k=='m
 function vLog(){if(ed)return vEd();
 const s=D.s[cur]||{m:60,i:5,sets:[]};
 let h=`<div class="c">${dp()}<div class="r"><div><label>مدت جلسه (دقیقه)</label><input type="number" inputmode="decimal" value="${s.m}" onchange="setS('m',this.value)"></div><div><label>شدت تمرین</label><select onchange="setS('i',this.value)">${[[3.5,'سبک'],[5,'متوسط'],[6,'سنگین']].map(a=>`<option value="${a[0]}" ${(s.i||5)==a[0]?'selected':''}>${a[1]}</option>`).join('')}</select></div></div></div>`;
-h+=`<div class="c"><h3>انتخاب حرکت</h3><div class="ch">${GR.map(g=>`<button class="${g==grp?'on':''}" onclick="grp='${g}';render()">${g}</button>`).join('')}</div><div class="g">${XL().filter(e=>!D.ex.h.includes(e[0])&&(grp=='همه'||e[3]==grp)).map(e=>`<button class="x ${sel==e[0]?'on':''}" onclick="sel='${e[0]}';render()"><b>${e[2]}</b>${e[1]}</button>`).join('')}</div><div class="r" style="margin-top:8px"><button class="x" onclick="ed='new';render()">➕ حرکت جدید</button>${sel?`<button class="x" onclick="ed='${sel}';render()">✏️ ویرایش «${en(sel)[1]}»</button>`:''}</div>${D.ex.h.length?'<p class="m"><a href="#" onclick="D.ex.h=[];save();render();return false" style="color:var(--ac)">بازگرداندن حرکات حذف‌شده</a></p>':''}`;
+h+=planCard();h+=`<div class="c"><h3>حرکت خارج از برنامه</h3><div class="ch">${GR.map(g=>`<button class="${g==grp?'on':''}" onclick="grp='${g}';render()">${g}</button>`).join('')}</div><div class="g">${XL().filter(e=>!D.ex.h.includes(e[0])&&(grp=='همه'||e[3]==grp)).map(e=>`<button class="x ${sel==e[0]?'on':''}" onclick="sel='${e[0]}';render()"><b>${e[2]}</b>${e[1]}</button>`).join('')}</div><div class="r" style="margin-top:8px"><button class="x" onclick="ed='new';render()">➕ حرکت جدید</button>${sel?`<button class="x" onclick="ed='${sel}';render()">✏️ ویرایش «${en(sel)[1]}»</button>`:''}</div>${D.ex.h.length?'<p class="m"><a href="#" onclick="D.ex.h=[];save();render();return false" style="color:var(--ac)">بازگرداندن حرکات حذف‌شده</a></p>':''}`;
 if(sel)h+=`<div class="r"><div><label>وزنه (کیلو)</label><input id="w" type="number" inputmode="decimal" value="${lastW(sel)}"></div><div><label>تکرار</label><input id="rp" type="number" inputmode="numeric"></div></div><button class="btn" onclick="addSet()">ثبت ست ${en(sel)[1]}</button>`;
 h+='</div>';
 h+=`<div class="c"><h3>ست‌های این روز</h3>${s.sets.length?s.sets.map((x,i)=>`<div class="row"><span>${en(x.e)[2]} ${en(x.e)[1]} — ${n(x.w)} کیلو × ${n(x.r)}</span><button onclick="delSet(${i})">✕</button></div>`).join(''):'<p class="m">هنوز ستی ثبت نشده.</p>'}</div>`;
@@ -139,7 +140,7 @@ let pend=null,msg='';
 const dlf=(name,txt)=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'application/json'}));a.download=name;a.click()};
 async function backup(){D.lb=T();save();const name='gym-backup-'+T()+'.json',txt=JSON.stringify({v:1,D,P}),C=window.Capacitor;try{if(C&&C.isNativePlatform&&C.isNativePlatform()){const F=C.Plugins.Filesystem;await F.writeFile({path:name,data:txt,directory:'CACHE',encoding:'utf8'});const u=await F.getUri({path:name,directory:'CACHE'});await C.Plugins.Share.share({title:name,url:u.uri})}else dlf(name,txt);msg=''}catch(e){msg='ساخت یا اشتراک فایل پشتیبان انجام نشد'}render()}
 function pickR(i){const f=i.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const o=JSON.parse(r.result);if(!o.D||!o.D.s)throw 0;o.P=o.P||{};pend=o;msg=''}catch(e){pend=null;msg='فایل پشتیبان معتبر نیست'}render()};r.readAsText(f)}
-async function doRestore(){const o=pend;for(const k of Object.keys(P))if(!(k in o.P))await pput(k,null);for(const k in o.P)await pput(k,o.P[k]);D=Object.assign({s:{},w:{},p:D.p,ex:{o:{},c:[],h:[]}},o.D);P=o.P;save();pend=null;msg='اطلاعات بازیابی شد';render()}
+async function doRestore(){const o=pend;for(const k of Object.keys(P))if(!(k in o.P))await pput(k,null);for(const k in o.P)await pput(k,o.P[k]);D=Object.assign({s:{},w:{},p:D.p,ex:{o:{},c:[],h:[]}},o.D);P=o.P;D.ex=D.ex||{o:{},c:[],h:[]};D.pl=D.pl||{a:[],c:null};save();pend=null;msg='اطلاعات بازیابی شد';render()}
 function vSet0(){return`<div class="c"><h3>پشتیبان‌گیری</h3><p class="m">همه تمرین‌ها، وزن‌ها، حرکات و عکس‌ها در یک فایل ذخیره می‌شود. بعد از ساخت فایل، آن را در Google Drive یا تلگرام ذخیره کن. ${D.lb?'آخرین پشتیبان: '+fd(D.lb)+'.':'هنوز پشتیبان نگرفته‌ای.'}</p><button class="btn" onclick="backup()">💾 ساخت فایل پشتیبان</button></div>
 <div class="c"><h3>بازیابی</h3><label class="btn" style="display:block;text-align:center;box-sizing:border-box">📂 انتخاب فایل پشتیبان<input type="file" style="display:none" onchange="pickR(this)"></label>${pend?`<p class="m">${n(Object.keys(pend.D.s).length)} جلسه و ${n(Object.keys(pend.P).length)} عکس پیدا شد. اطلاعات فعلی با آن جایگزین می‌شود.</p><button class="btn" onclick="doRestore()">جایگزین کن</button>`:''}${msg?`<p class="m" style="color:var(--ac)">${msg}</p>`:''}</div>`}
 let cy=0,cm=0;
@@ -163,7 +164,32 @@ function recs(){const m={};Object.keys(D.s).sort().forEach(d=>D.s[d].sets.forEac
 return`<div class="c"><h3>رکوردهای من (${n(k.length)} حرکت)</h3>${k.map(e=>{const o=m[e];return`<div class="row"><span>${en(e)[2]} ${en(e)[1]}<br><small class="m">${n(o.s)} ست · ${n(o.r)} تکرار · ${n(o.d.size)} جلسه</small></span><b>${o.b?n(o.b)+' کیلو':'وزن بدن'}<br><small class="m">${fd(o.bd)}</small></b></div>`}).join('')}</div>`}
 function vPro(){return vPro0()+recs()}
 function vSet(){return vCal()+vSet0()}
-const TABS=[['log','🏋️','تمرین',vLog],['cld','📅','تقویم',vCld],['pro','📈','پیشرفت',vPro],['body','⚖️','بدن',vBody],['rep','📋','گزارش',vRep],['set','⚙️','بیشتر',vSet]];
+D.pl=D.pl||{a:[],c:null};
+let pd=null,pln={ed:null,open:null};
+const cl=o=>JSON.parse(JSON.stringify(o));
+const curPlan=()=>D.pl.a.find(p=>p.id==D.pl.c)||null;
+const planFor=d=>[...D.pl.a].reverse().filter(p=>p.start<=d&&(!p.end||d<=p.end)).sort((a,b)=>a.start<b.start?1:-1)[0]||null;
+function planStats(p){const e=p.end||T();return{n:Object.keys(D.s).filter(d=>d>=p.start&&d<=e).length}}
+function archiveCur(){const c=curPlan();if(c){const y=addD(T(),-1);c.end=c.start>y?c.start:y}}
+const exList=p=>p.ex.map((x,i)=>`<div class="row"><span>${fy(i+1)}. ${en(x.e)[2]} ${en(x.e)[1]}</span><span class="m">${fy(x.s)} × ${fy(x.r)}</span></div>`).join('');
+function planAdd(i){const p=planFor(cur),x=p.ex[i],w=+$('pw'+i).value||0,r=+$('pr'+i).value;if(!(r>0))return;(D.s[cur]=D.s[cur]||{m:60,sets:[]}).sets.push({e:x.e,w,r});save();render()}
+function planCard(){const p=planFor(cur);
+if(!p)return`<div class="c"><h3>برنامه تمرینی</h3><p class="m">${D.pl.a.length?'برای این روز برنامه‌ای نبود.':'هنوز برنامه‌ای نداری. برنامه بساز تا هر روز حرکاتش را همین‌جا ثبت کنی.'}</p>${D.pl.a.length?'':`<button class="btn" onclick="tab='pln';editPlan('new')">ساخت برنامه</button>`}</div>`;
+const s=D.s[cur]||{sets:[]},done=p.ex.filter(x=>s.sets.some(y=>y.e==x.e)).length;
+return`<div class="c"><h3>${p.name}</h3><p class="m">برنامه ${p==curPlan()?'جاری':'آن زمان'} شامل ${fy(p.ex.length)} حرکت است. ${cur==T()?'امروز':'در این روز'} ${fy(done)} از ${fy(p.ex.length)} حرکت انجام شده.</p>${p.ex.map((x,i)=>{const mine=s.sets.map((y,gi)=>[y,gi]).filter(a=>a[0].e==x.e),ok=mine.length>=x.s;
+return`<div class="px"><div class="row" style="border:0"><span><b>${ok?'✅':en(x.e)[2]} ${en(x.e)[1]}</b><br><small class="m">هدف: ${fy(x.s)} ست × ${fy(x.r)} تکرار</small></span><span class="m">${fy(mine.length)}/${fy(x.s)} ست</span></div>${mine.length?`<div class="ch" style="margin:0 0 6px">${mine.map(a=>`<button onclick="delSet(${a[1]})">${n(a[0].w)}×${n(a[0].r)} ✕</button>`).join('')}</div>`:''}<div class="r" style="align-items:center"><input id="pw${i}" type="number" inputmode="decimal" placeholder="وزنه (کیلو)" value="${lastW(x.e)}"><input id="pr${i}" type="number" inputmode="numeric" placeholder="تکرار" value="${x.r}"><button class="btn" style="margin:0;flex:0 0 64px" onclick="planAdd(${i})">ثبت</button></div></div>`}).join('')}</div>`}
+function editPlan(id){pln.ed=id;pd=id=='new'?{name:'برنامه '+fy(D.pl.a.length+1),ex:[]}:cl(D.pl.a.find(p=>p.id==id));render()}
+function syncD(){const i=$('pn');if(i)pd.name=i.value.replace(/["<>]/g,'').trim()||pd.name}
+function addPe(){syncD();pd.ex.push({e:$('pa').value,s:3,r:10});render()}
+function savePlan(){syncD();if(!pd.ex.length)return;if(pln.ed=='new'){archiveCur();const id='p'+Date.now();D.pl.a.push({id,name:pd.name,start:T(),end:null,ex:pd.ex});D.pl.c=id}else{const p=D.pl.a.find(x=>x.id==pln.ed);p.name=pd.name;p.ex=pd.ex}pln.ed=null;save();render()}
+function reuse(id){const o=D.pl.a.find(p=>p.id==id);archiveCur();const nid='p'+Date.now();D.pl.a.push({id:nid,name:o.name,start:T(),end:null,ex:cl(o.ex)});D.pl.c=nid;save();tab='log';render()}
+function sugg(){const id='p'+Date.now();D.pl.a.push({id,name:'برنامه فول‌بادی',start:T(),end:null,ex:[['squat',3,10],['lp',3,12],['rdl',3,10],['bp',3,10],['row',3,10],['lat',3,10],['ohp',3,10],['bi',2,12],['tri',2,12],['crunch',3,15]].map(a=>({e:a[0],s:a[1],r:a[2]}))});D.pl.c=id;save();render()}
+function vPe(){const nw=pln.ed=='new';return`<div class="c"><h3>${nw?'برنامه جدید':'ویرایش برنامه'}</h3><label>نام برنامه</label><input id="pn" value="${pd.name}"><p class="m">برای هر حرکت: ست × تکرار هدف</p>${pd.ex.map((x,i)=>`<div class="row"><span>${en(x.e)[2]} ${en(x.e)[1]}</span><span class="r" style="flex:0 0 170px;align-items:center"><input type="number" inputmode="numeric" value="${x.s}" onchange="pd.ex[${i}].s=+this.value||1">×<input type="number" inputmode="numeric" value="${x.r}" onchange="pd.ex[${i}].r=+this.value||1"><button onclick="syncD();pd.ex.splice(${i},1);render()">✕</button></span></div>`).join('')}<label>افزودن حرکت</label><div class="r"><select id="pa">${XL().filter(e=>!D.ex.h.includes(e[0])).map(e=>`<option value="${e[0]}">${e[2]} ${e[1]}</option>`).join('')}</select><button class="btn" style="flex:0 0 60px;margin:0" onclick="addPe()">➕</button></div>${nw&&curPlan()?`<button class="x" style="width:100%;margin-top:8px;padding:10px" onclick="syncD();pd.ex=cl(curPlan().ex);render()">کپی حرکات برنامه جاری</button>`:''}<p class="m">${fy(pd.ex.length)} حرکت در برنامه</p><button class="btn" onclick="savePlan()">ذخیره برنامه</button><button class="btn" style="background:none;color:var(--mu)" onclick="pln.ed=null;render()">انصراف</button></div>`}
+function vPln(){if(pln.ed)return vPe();
+const c=curPlan(),old=D.pl.a.filter(p=>p.id!=D.pl.c).sort((a,b)=>a.start<b.start?1:-1);
+let h=c?`<div class="c"><h3>برنامه جاری: ${c.name}</h3><p class="m">شامل ${fy(c.ex.length)} حرکت — شروع ${fd(c.start)}</p>${exList(c)}<div class="r"><button class="btn" onclick="editPlan('${c.id}')">✏️ ویرایش</button><button class="btn" onclick="editPlan('new')">➕ برنامه جدید</button></div></div>`:`<div class="c"><h3>برنامه‌ای نیست</h3><button class="btn" onclick="editPlan('new')">➕ ساخت برنامه</button><button class="btn" style="background:var(--mu)" onclick="sugg()">برنامه پیشنهادی (۱۰ حرکت)</button></div>`;
+return h+`<div class="c"><h3>برنامه‌های قبلی</h3>${old.length?old.map(p=>`<div class="row" onclick="pln.open=pln.open=='${p.id}'?null:'${p.id}';render()"><span><b>${p.name}</b><br><small class="m">${fd(p.start)}${p.end?' تا '+fd(p.end):''} · ${fy(p.ex.length)} حرکت · ${fy(planStats(p).n)} جلسه</small></span><span>${pln.open==p.id?'▲':'▼'}</span></div>${pln.open==p.id?exList(p)+`<button class="btn" onclick="reuse('${p.id}')">استفاده دوباره به‌عنوان برنامه جاری</button>`:''}`).join(''):'<p class="m">هنوز برنامه قبلی‌ای نداری. وقتی برنامه جدید بسازی، برنامه فعلی اینجا نگه داشته می‌شود.</p>'}</div>`}
+const TABS=[['log','🏋️','تمرین',vLog],['pln','📋','برنامه',vPln],['cld','📅','تقویم',vCld],['pro','📈','پیشرفت',vPro],['body','⚖️','بدن',vBody],['rep','📋','گزارش',vRep],['set','⚙️','بیشتر',vSet]];
 function render(){const t=TABS.find(x=>x[0]==tab);$('v').innerHTML=t[3]();$('nv').innerHTML=TABS.map(x=>`<button class="${x[0]==tab?'on':''}" onclick="tab='${x[0]}';render();$('v').scrollTop=0"><b>${x[1]}</b>${x[2]}</button>`).join('')}
 render();pget().then(a=>{P=a;render()});
 </script></body></html>
